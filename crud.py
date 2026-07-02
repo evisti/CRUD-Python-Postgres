@@ -1,9 +1,8 @@
-import os
+import os 
+import psycopg
 
 from dotenv import load_dotenv
 load_dotenv()
-
-import psycopg
 
 
 def connection(user: str, password: str, host: str, port: str, database: str) -> psycopg.Connection:
@@ -37,8 +36,17 @@ class CRUD():
         with self.conn.transaction():
             self.cur.execute(query, params)
 
-    def create_table(self):
-        pass
+    def create_table(self) -> None:
+        """
+        Create table, if it doesn't already exist.
+        """
+        create_table_query = '''
+            CREATE TABLE IF NOT EXISTS users (
+                id SERIAL PRIMARY KEY,
+                name TEXT NOT NULL,
+                email TEXT UNIQUE NOT NULL
+            );'''
+        self._run_query(create_table_query)
 
     def create_record(self):
         pass
@@ -62,19 +70,11 @@ def main():
 
     # connect to database
     with connection(user, password, host, port, database) as conn:
-        print('Connection:', conn)
-
-        query = '''
-            CREATE TABLE IF NOT EXISTS notes (
-            id SERIAL PRIMARY KEY,
-            note TEXT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            );'''
-        
-        print(query)
-
+        # initialize
         crud = CRUD(conn)
-        crud._run_query(query)
+        
+        # create table, if it doesn't already exist
+        crud.create_table()
 
     # The connection is closed at the end of the block
 
