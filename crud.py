@@ -1,13 +1,28 @@
 import os
 
-from dotenv import load_env()
-load_env()
+from dotenv import load_dotenv
+load_dotenv()
 
 import psycopg
 
 
-def connection():
-    pass
+def connection(user: str, password: str, host: str, port: str, database: str) -> psycopg.Connection:
+    """
+    Connect to the PostgreSQL database using psycopg.
+    """
+    try: 
+        conn = psycopg.connect(
+            user=user,
+            password=password,
+            host=host,
+            port=port,
+            dbname=database,
+            autocommit=True
+        )
+        return conn
+    except psycopg.Error as e:
+        print('Connection failed.')
+        print(e)
 
 
 class CRUD():
@@ -34,7 +49,17 @@ class CRUD():
 
 
 def main():
-    pass
+    database = os.getenv('DATABASE')
+    user = os.getenv('USER')
+    password = os.getenv('PASSWORD')
+    host = os.getenv('HOST')
+    port = os.getenv('PORT')
+
+    print(database, user, password, host, port)
+
+    # connect to database
+    with connection(user, password, host, port, database) as conn:
+        print(conn)
 
 
 if __name__=='__main__':
