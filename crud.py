@@ -27,10 +27,15 @@ def connection(user: str, password: str, host: str, port: str, database: str) ->
 
 class CRUD():
     def __init__(self, connection: psycopg.Connection):
-        pass
+        self.conn = connection
+        self.cur = self.conn.cursor()
 
-    def _execute_query(self, query: str):
-        pass
+    def _run_query(self, query: str, params: tuple|list = None) -> None:
+        """
+        Start a transaction and run a query against the database. COMMIT is executed at the end of the transaction block.
+        """
+        with self.conn.transaction():
+            self.cur.execute(query, params)
 
     def create_table(self):
         pass
@@ -55,11 +60,23 @@ def main():
     host = os.getenv('HOST')
     port = os.getenv('PORT')
 
-    print(database, user, password, host, port)
-
     # connect to database
     with connection(user, password, host, port, database) as conn:
-        print(conn)
+        print('Connection:', conn)
+
+        query = '''
+            CREATE TABLE IF NOT EXISTS notes (
+            id SERIAL PRIMARY KEY,
+            note TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );'''
+        
+        print(query)
+
+        crud = CRUD(conn)
+        crud._run_query(query)
+
+    # The connection is closed at the end of the block
 
 
 if __name__=='__main__':
