@@ -20,7 +20,7 @@ def connection(user: str, password: str, host: str, port: str, database: str) ->
         )
         return conn
     except psycopg.Error as e:
-        print('Connection failed.')
+        print("Connection failed.")
         print(e)
 
 
@@ -40,16 +40,26 @@ class CRUD():
         """
         Create table, if it doesn't already exist.
         """
-        create_table_query = '''
+        create_table_query = """
             CREATE TABLE IF NOT EXISTS users (
                 id SERIAL PRIMARY KEY,
                 name TEXT NOT NULL,
                 email TEXT UNIQUE NOT NULL
-            );'''
+            );"""
         self._run_query(create_table_query)
 
-    def create_record(self):
-        pass
+    def create_record(self, name: str, email: str) -> None:
+        """
+        Create a new record in the table (C in CRUD)
+        """
+        # use t-string to process query parameters in a safe way (new in Python 3.14)
+        insert_query = t"INSERT INTO users (name, email) VALUES ({name}, {email})"
+
+        # execute query
+        self._run_query(insert_query)
+
+        print(self.cur.rowcount, "record inserted")
+
 
     def read(self):
         pass
@@ -62,11 +72,11 @@ class CRUD():
 
 
 def main():
-    database = os.getenv('DATABASE')
-    user = os.getenv('USER')
-    password = os.getenv('PASSWORD')
-    host = os.getenv('HOST')
-    port = os.getenv('PORT')
+    database = os.getenv("DATABASE")
+    user = os.getenv("USER")
+    password = os.getenv("PASSWORD")
+    host = os.getenv("HOST")
+    port = os.getenv("PORT")
 
     # connect to database
     with connection(user, password, host, port, database) as conn:
@@ -76,9 +86,16 @@ def main():
         # create table, if it doesn't already exist
         crud.create_table()
 
+        # Perform CRUD operations on the table:
+        # create
+        crud.create_record("Jessica Hogg", "jess.hogg@example.com")
+        crud.create_record("Katrina Parr", "kparr@example.com")
+        crud.create_record("Master Robin", "master.robin@example.com")
+        crud.create_record("Necrotic Ninja", "necrotic@ninja.com")
+
     # The connection is closed at the end of the block
 
 
-if __name__=='__main__':
+if __name__=="__main__":
     main()
 
