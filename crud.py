@@ -29,12 +29,12 @@ class CRUD():
         self.conn = connection
         self.cur = self.conn.cursor()
 
-    def _run_query(self, query: str, params: tuple|list = None) -> None:
+    def _run_query(self, query: str) -> None:
         """
         Start a transaction and run a query against the database. COMMIT is executed at the end of the transaction block.
         """
         with self.conn.transaction():
-            self.cur.execute(query, params)
+            self.cur.execute(query)
 
     def create_table(self) -> None:
         """
@@ -82,18 +82,20 @@ def main():
     with connection(user, password, host, port, database) as conn:
         # initialize
         crud = CRUD(conn)
-        
+
         # create table, if it doesn't already exist
         crud.create_table()
 
         # Perform CRUD operations on the table:
-        # create
+
+        # create a few records
         crud.create_record("Jessica Hogg", "jess.hogg@example.com")
         crud.create_record("Katrina Parr", "kparr@example.com")
         crud.create_record("Master Robin", "master.robin@example.com")
         crud.create_record("Necrotic Ninja", "necrotic@ninja.com")
 
-    # The connection is closed at the end of the block
+
+    # The database connection is closed at the end of this block
 
 
 if __name__=="__main__":
