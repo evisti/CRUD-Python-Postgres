@@ -63,18 +63,16 @@ class CRUD():
         else:
             print(f"Record created sucessfully: {name}, {email}")
 
-
     def read(self):
         """
         Read and print all records from the table (R in CRUD)
         """
-        read_query = 'SELECT * FROM users;'
+        read_query = "SELECT * FROM users;"
         self.cur.execute(read_query)
 
         # iterate on the cursor to print all records
         for record in self.cur:
             print(record)
-
 
     def update_record(self, email: str, new_name: str):
         """
@@ -83,8 +81,10 @@ class CRUD():
         update_query = t"UPDATE users SET name = {new_name} WHERE email = {email}"
         self._run_query(update_query)
 
-        print(f"Record updated sucessfully: {new_name}, {email}")
-
+        if self.cur.rowcount > 0:
+            print(f"Record updated sucessfully: {new_name}, {email}")
+        else:
+            print(f"Error: No record exists with email {email}")
 
     def delete_record(self):
         pass
@@ -104,6 +104,7 @@ def main():
 
         # create table, if it doesn't already exist
         crud.create_table()
+
 
         # Perform CRUD operations on the table:
 
