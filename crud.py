@@ -5,9 +5,19 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-def connection(user: str, password: str, host: str, port: str, database: str) -> psycopg.Connection:
+def connection(database: str, user: str, password: str, host: str, port: str) -> psycopg.Connection:
     """
-    Connect to the PostgreSQL database using psycopg.
+    Connect to the PostgreSQL database using psycopg. 
+
+    Args:
+        database (str): The name of the database.
+        user (str): The username to connect to the database.
+        password (str): The password to connect to the database.
+        host (str): The host of the database.
+        port (str): The port of the database.
+
+    Returns:
+        psycopg.Connection: A psycopg connection object to the PostgreSQL database.
     """
     try: 
         conn = psycopg.connect(
@@ -25,6 +35,19 @@ def connection(user: str, password: str, host: str, port: str, database: str) ->
 
 
 class CRUD():
+    """
+    A class to perform CRUD operations on a PostgreSQL database using psycopg.
+
+    Args:
+        connection (psycopg.Connection): A psycopg connection object to the PostgreSQL database.
+
+    Methods:
+        create_table: Create a table in the database if it doesn't already exist.
+        create_record: Create a new record in the table.
+        read: Read and print all records from the table.
+        update_record: Update an existing record in the table.
+        delete_record: Delete an existing record from the table.
+    """
     def __init__(self, connection: psycopg.Connection):
         self.conn = connection
         self.cur = self.conn.cursor()
@@ -32,6 +55,9 @@ class CRUD():
     def _run_query(self, query: str) -> None:
         """
         Start a transaction and run a query against the database. COMMIT is executed at the end of the transaction block.
+
+        Args:
+            query (str): The SQL query to be executed.
         """
         with self.conn.transaction():
             self.cur.execute(query)
@@ -51,11 +77,15 @@ class CRUD():
     def create_record(self, name: str, email: str) -> None:
         """
         Create a new record in the table (C in CRUD)
+
+        Args:
+            name (str): The name of the user.
+            email (str): The email of the user.
         """
         # use t-string to process query parameters in a safe way (new in Python 3.14)
         insert_query = t"INSERT INTO users (name, email) VALUES ({name}, {email})"
 
-        # execute query
+        # execute query and handle unique constraint violation
         try:
             self._run_query(insert_query)
         except psycopg.errors.UniqueViolation as e:
@@ -77,10 +107,15 @@ class CRUD():
     def update_record(self, email: str, new_name: str) -> None:
         """
         Update an existing record in the table (the U in CRUD)
+
+        Args:
+            email (str): The email of the user to be updated.
+            new_name (str): The new name of the user.
         """
         update_query = t"UPDATE users SET name = {new_name} WHERE email = {email}"
         self._run_query(update_query)
 
+        # check if any record was updated
         if self.cur.rowcount > 0:
             print(f"Record updated sucessfully: {new_name}, {email}")
         else:
@@ -89,10 +124,14 @@ class CRUD():
     def delete_record(self, email: str) -> None:
         """
         Delete an existing record from the table (the D in CRUD)
+
+        Args:
+            email (str): The email of the user to be deleted.
         """
         delete_query = t"DELETE FROM users WHERE email = {email}"
         self._run_query(delete_query)
 
+        # check if any record was deleted
         if self.cur.rowcount > 0:
             print(f"Record deleted sucessfully: {email}")
         else:
@@ -100,6 +139,7 @@ class CRUD():
 
 
 def main():
+    # get database connection parameters from environment variables
     database = os.getenv("DATABASE")
     user = os.getenv("USER")
     password = os.getenv("PASSWORD")
@@ -107,7 +147,7 @@ def main():
     port = os.getenv("PORT")
 
     # connect to database
-    with connection(user, password, host, port, database) as conn:
+    with connection(database, user, password, host, port) as conn:
         # initialize
         crud = CRUD(conn)
 
