@@ -63,7 +63,7 @@ class CRUD():
         else:
             print(f"Record created sucessfully: {name}, {email}")
 
-    def read(self):
+    def read(self) -> None:
         """
         Read and print all records from the table (R in CRUD)
         """
@@ -74,7 +74,7 @@ class CRUD():
         for record in self.cur:
             print(record)
 
-    def update_record(self, email: str, new_name: str):
+    def update_record(self, email: str, new_name: str) -> None:
         """
         Update an existing record in the table (the U in CRUD)
         """
@@ -86,8 +86,17 @@ class CRUD():
         else:
             print(f"Error: No record exists with email {email}")
 
-    def delete_record(self):
-        pass
+    def delete_record(self, email: str) -> None:
+        """
+        Delete an existing record from the table (the D in CRUD)
+        """
+        delete_query = t"DELETE FROM users WHERE email = {email}"
+        self._run_query(delete_query)
+
+        if self.cur.rowcount > 0:
+            print(f"Record deleted sucessfully: {email}")
+        else:
+            print(f"Error: No record exists with email {email}")
 
 
 def main():
@@ -105,7 +114,6 @@ def main():
         # create table, if it doesn't already exist
         crud.create_table()
 
-
         # Perform CRUD operations on the table:
 
         # create a few new records
@@ -120,11 +128,11 @@ def main():
         # update a record
         crud.update_record(email="master.robin@example.com", new_name="Brave Master Robin")
 
-
+        # delete a record
+        crud.delete_record(email="jess.hogg@example.com")
 
     # The database connection is closed at the end of this block
 
 
 if __name__=="__main__":
     main()
-
