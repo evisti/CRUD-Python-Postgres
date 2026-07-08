@@ -62,7 +62,16 @@ class CRUD():
 
 
     def read(self):
-        pass
+        """
+        Read and print all records from the table (R in CRUD)
+        """
+        read_query = 'SELECT * FROM users;'
+        self.cur.execute(read_query)
+
+        # iterate on the cursor to print the records
+        for record in self.cur:
+            print(record)
+
 
     def update_record(self):
         pass
@@ -88,11 +97,15 @@ def main():
 
         # Perform CRUD operations on the table:
 
-        # create a few records
+        # create a few new records
         crud.create_record("Jessica Hogg", "jess.hogg@example.com")
         crud.create_record("Katrina Parr", "kparr@example.com")
         crud.create_record("Master Robin", "master.robin@example.com")
         crud.create_record("Necrotic Ninja", "necrotic@ninja.com")
+
+        # read all records
+        crud.read()
+
 
 
     # The database connection is closed at the end of this block
