@@ -61,7 +61,7 @@ class CRUD():
         except psycopg.errors.UniqueViolation as e:
             print(f"Error: Email {email} already exists. You cannot insert a new record with an email that already exists.")
         else:
-            print(self.cur.rowcount, "record inserted")
+            print(f"Record created sucessfully: {name}, {email}")
 
 
     def read(self):
@@ -71,13 +71,20 @@ class CRUD():
         read_query = 'SELECT * FROM users;'
         self.cur.execute(read_query)
 
-        # iterate on the cursor to print the records
+        # iterate on the cursor to print all records
         for record in self.cur:
             print(record)
 
 
-    def update_record(self):
-        pass
+    def update_record(self, email: str, new_name: str):
+        """
+        Update an existing record in the table (the U in CRUD)
+        """
+        update_query = t"UPDATE users SET name = {new_name} WHERE email = {email}"
+        self._run_query(update_query)
+
+        print(f"Record updated sucessfully: {new_name}, {email}")
+
 
     def delete_record(self):
         pass
@@ -108,6 +115,9 @@ def main():
 
         # read all records
         crud.read()
+
+        # update a record
+        crud.update_record(email="master.robin@example.com", new_name="Brave Master Robin")
 
 
 
