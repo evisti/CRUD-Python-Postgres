@@ -1,8 +1,7 @@
-# CRUD operations in PostgreSQL and Python
+# CRUD operations in PostgreSQL using Python
 
-This project demonstrates how to perform the four basic CRUD operations on a PostgreSQL database using Python.
-
-CRUD stands for create, read, update, and delete. These are the four fundamental operations used to manage data in a database.
+This project demonstrates how to perform the four basic CRUD (create, read, update, delete) operations on a PostgreSQL database using Python.
+These are the four fundamental operations used to manage data in a database.
 
 The project encapsulates the operations in a single class, making it easy to interact with the database through one object. 
 
