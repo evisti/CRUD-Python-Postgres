@@ -56,9 +56,12 @@ class CRUD():
         insert_query = t"INSERT INTO users (name, email) VALUES ({name}, {email})"
 
         # execute query
-        self._run_query(insert_query)
-
-        print(self.cur.rowcount, "record inserted")
+        try:
+            self._run_query(insert_query)
+        except psycopg.errors.UniqueViolation as e:
+            print(f"Error: Email {email} already exists. You cannot insert a new record with an email that already exists.")
+        else:
+            print(self.cur.rowcount, "record inserted")
 
 
     def read(self):
