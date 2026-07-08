@@ -3,6 +3,7 @@
 This project demonstrates how to perform the four basic CRUD operations on a PostgreSQL database using Python.
 
 CRUD stands for create, read, update, and delete. These are the four fundamental operations used to manage data in a database.
+
 The project encapsulates the operations in a single class, making it easy to interact with the database through one object. 
 
 
@@ -17,7 +18,7 @@ Before running the project, ensure the following are installed:
 
 ### Dependencies 
 
-Run the following command to install all required dependendencies:
+Run the following command to install all required dependencies:
 ```bash
 uv sync
 ```
