@@ -28,7 +28,7 @@ Create a `.env` file in the project root from the template:
 ```bash
 cp .env.template .env
 ```
-Then edit `.env` and provide your PostgreSQL connection details.
+Then edit `.env` and provide your PostgreSQL connection details (host, port, database, username, and password). 
 
 
 ## Example
